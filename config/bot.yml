@@ -1,0 +1,8 @@
+slack_events_callback_path: ${SLACK_EVENTS_CALLBACK_PATH} # EDIT  ${SLACK_EVENTS_CALLBACK_PATH} (e.g. /slack_events/v1/events)
+slack_interactions_callback_path: ${SLACK_INTERACTIONS_CALLBACK_PATH} # EDIT ${SLACK_INTERACTIONS_CALLBACK_PATH} (e.g. /slack_events/v1/interactions)
+
+
+name: mybot
+chat_application: slack
+slack_token: ${SLACK_TOKEN}
+slack_verification_token: ${SLACK_VERIFICATION_TOKEN}
