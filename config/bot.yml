@@ -1,8 +1,37 @@
-slack_events_callback_path: ${SLACK_EVENTS_CALLBACK_PATH} # EDIT  ${SLACK_EVENTS_CALLBACK_PATH} (e.g. /slack_events/v1/events)
-slack_interactions_callback_path: ${SLACK_INTERACTIONS_CALLBACK_PATH} # EDIT ${SLACK_INTERACTIONS_CALLBACK_PATH} (e.g. /slack_events/v1/interactions)
+slack_events_callback_path: ${SLACK_EVENTS_CALLBACK_PATH} 
+slack_interactions_callback_path: ${SLACK_INTERACTIONS_CALLBACK_PATH} 
 
+# Name of Bot
+name: TimeBot
 
-name: mybot
+# Select Chat Application
 chat_application: slack
+
+# Slack Verification Information
 slack_token: ${SLACK_TOKEN}
 slack_verification_token: ${SLACK_VERIFICATION_TOKEN}
+
+# System
+cli: false
+# true: enable ability to turn on CLI Mode.
+# false: disable ability to turn on CLI Mode.
+
+scheduler: false
+# true: enable rule scheduling
+# false: disable rule scheduling 
+
+debug: true
+# true: enable logging to console
+# false: disable logging to console
+
+log_json: false
+# true: logs will be in JOSN format
+# false: logs will be in plain text
+
+
+# Cusome Help Text
+# custome_help_text:
+# ```annouce something```
+# ```help```
+# ```weather```
+# ...etc...
