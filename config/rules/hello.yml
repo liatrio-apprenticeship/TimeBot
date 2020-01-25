@@ -1,7 +1,0 @@
-name: hello
-active: true
-respond: hello
-format_output: "What's up?"
-direct_message_only: false
-help_text: hello
-include_in_help: true
