@@ -40,6 +40,7 @@ TimeBot is a Google Sheet integrated Slackbot used for timekeeping. TimeBot keep
 	- im:write
 	- mpim:history
 	- users:read
+   - users:read.email
 
 #### Event Subscriptions
 
@@ -65,7 +66,7 @@ TimeBot is a Google Sheet integrated Slackbot used for timekeeping. TimeBot keep
 
 #### Run Docker Command in Directory Holding 'config' Folder
 
-- ``` docker run --rm --name mybot --env SLACK_TOKEN=$SLACK_TOKEN --env SLACK_VERIFICATION_TOKEN=$SLACK_VERIFICATION_TOKEN --env SLACK_EVENTS_CALLBACK_PATH=$SLACK_EVENTS_CALLBACK_PATH --env SLACK_INTERACTIONS_CALLBACK_PATH=$SLACK_INTERACTIONS_CALLBACK_PATH -p 3000:3000 -v "$PWD"/config:/config target/flottbot:latest "./flottbot" ```
+- ``` docker run --rm --name mybot --env SLACK_TOKEN=$SLACK_TOKEN --env SLACK_VERIFICATION_TOKEN=$SLACK_VERIFICATION_TOKEN --env SLACK_EVENTS_CALLBACK_PATH=$SLACK_EVENTS_CALLBACK_PATH --env SLACK_INTERACTIONS_CALLBACK_PATH=$SLACK_INTERACTIONS_CALLBACK_PATH -p 3000:3000 -v "$PWD"/config:/go/config target/flottbot:golang "./flottbot" ```
 > You can also download the correct flottbot release file for your OS [here](https://github.com/target/flottbot/releases) and run it in the directory above your /config/ folder to start TimeBot
 
 ### 3. Using Ngrok 
