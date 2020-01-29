@@ -1,0 +1,13 @@
+version: '3'
+services:
+  database:
+    image: 'mongo'
+    container_name: 'my-mongo-container'
+    environment:
+      - MONGO_INITDB_DATABASE=sup_dude # database name you want to make
+      #- MONGO_INITDB_ROOT_USERNAME=my-container-root-username # set your container root username
+      #- MONGOINITDB_ROOT_PASSWORD=secret # set your container root password
+    volumes:
+      - ./mongo-volume:/data/db
+    ports:
+      - '27017:27017'

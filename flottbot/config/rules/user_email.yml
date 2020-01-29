@@ -1,0 +1,11 @@
+# meta
+name: User-Email
+active: true
+# trigger and args
+respond: email
+# response
+direct_message_only: false
+format_output: "ID : ${_user.id} |  Name : ${_user.name} | Email : ${_user.email}"
+# help
+help_text: email 
+include_in_help: true
