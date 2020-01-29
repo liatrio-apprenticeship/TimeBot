@@ -1,7 +1,10 @@
-version: '3'
+version: '3.3'
 services:
+  flottbot:
+    build: ./flottbot/
+    container_name: 'my-flottbot-container'
   database:
-    image: 'mongo'
+    build: ./mongodb/
     container_name: 'my-mongo-container'
     environment:
       - MONGO_INITDB_DATABASE=sup_dude # database name you want to make
