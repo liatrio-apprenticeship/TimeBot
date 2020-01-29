@@ -8,7 +8,7 @@ args:
 actions:
  - name: "mongo"
    type: exec
-   cmd: go run config/scripts/mongo.go
+   cmd: go run config/scripts/mongo.go ${_user.email}
 # response
 direct_message_only: false
 format_output: "${_exec_output}"

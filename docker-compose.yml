@@ -3,6 +3,8 @@ services:
   flottbot:
     build: ./flottbot/
     container_name: 'my-flottbot-container'
+    ports:
+      - '3000:3000'
   database:
     build: ./mongodb/
     container_name: 'my-mongo-container'
