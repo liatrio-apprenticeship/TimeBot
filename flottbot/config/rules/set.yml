@@ -1,0 +1,18 @@
+# meta
+name: Set
+active: true
+# trigger and args
+respond: set
+args:
+ - code
+# actions
+actions:
+ - name: "set"
+   type: exec
+   cmd: go run config/scripts/set.go ${_user.email} ${code}
+# response
+direct_message_only: false
+format_output: "${_exec_output}"
+# help
+help_text: set [url]
+include_in_help: true
