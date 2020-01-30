@@ -4,6 +4,8 @@ import (
     "context"
     "fmt"
     "log"
+    "os"
+    "regexp"
 
     "go.mongodb.org/mongo-driver/bson"
     "go.mongodb.org/mongo-driver/mongo"
@@ -11,13 +13,13 @@ import (
 )
 
 type Users struct {
-    uid string
-    sid string
+    Uid string
+    Sid string
 }
 
 func main() {
     // Set client options
-    clientOptions := options.Client().ApplyURI("mongodb://localhost:27017")
+    clientOptions := options.Client().ApplyURI("mongodb://database:27017")
 
     // Connect to MongoDB
     client, err := mongo.Connect(context.TODO(), clientOptions)
@@ -32,43 +34,40 @@ func main() {
     if err != nil {
         log.Fatal(err)
     }
-    fmt.Println("Connected to MongoDB!")
-
-    collection := client.Database("main").Collection("user")
+    // create regex that will pull out the sheetid from a url
+    re := regexp.MustCompile(`https://docs.google.com/spreadsheets/d/([a-zA-Z0-9-_]+)/edit[#&]gid=([0-9]+)`)
+    sheetid := re.FindSubmatch([]byte(os.Args[2]))
+    // if the user entered a bad url
+    if sheetid == nil {
+        fmt.Println("Please enter valid Google Sheets url\n")
+        os.Exit(1)
+    }
+    string_sheet_id := string(sheetid[1])
+    collection := client.Database("main").Collection("users")
 
     // create filter that's used to find the user
-    filter := bson.D{{"uid", "Jacob"}}
+    filter := bson.D{{"uid", os.Args[1]}}
     update := bson.D{
         {"$set", bson.D{
-            {"sid", "this was updated"},
+            {"sid", string_sheet_id},
         }},
     }
+    // attempt to update their sheet
     updateResult, err := collection.UpdateOne(context.TODO(), filter, update)
     if err != nil {
         log.Fatal(err)
     }
     // if it didn't find any results when trying to update then add the user
     if updateResult.MatchedCount == 0 {
-        fmt.Printf("didn't match any documents creating new one\n")
-        //jacob := Users{"Jacob", "random fake id for a user"}
-        type MongoFields struct {
-          FieldStr string `json:"Field Str"`
-          FieldInt string `json:"Field Int"`
-        }
-
-        jacob := MongoFields{
-          FieldStr: "Jacob",
-          FieldInt: "Random fake id for user",
-        }
-
-        insertResult, err := collection.InsertOne(context.TODO(), jacob)
+        user := Users{os.Args[1], string_sheet_id}
+        insertResult, err := collection.InsertOne(context.TODO(), user)
         if err != nil {
-          fmt.Printf("There was an err\n")
             log.Fatal(err)
         }
-        fmt.Println("Inserted a Single Document: ", insertResult.InsertedID)
+        log.Print(insertResult)
+        fmt.Println("Successfully added your sheet")
     } else {
-        fmt.Printf("updated successfully\n")
+        fmt.Printf("Your sheet has been successfully updated\n")
     }
 
     err = client.Disconnect(context.TODO())
@@ -76,5 +75,5 @@ func main() {
     if err != nil {
         log.Fatal(err)
     }
-    fmt.Println("Connection to MongoDB closed.")
+
 }

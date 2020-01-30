@@ -1,17 +1,18 @@
 # meta
-name: Mongo
+name: Set
 active: true
 # trigger and args
-respond: mongo 
+respond: set
 args:
+ - code
 # actions
 actions:
- - name: "mongo"
+ - name: "set"
    type: exec
-   cmd: go run config/scripts/mongo.go
+   cmd: go run config/scripts/set.go ${_user.email} ${code}
 # response
 direct_message_only: false
 format_output: "${_exec_output}"
 # help
-help_text: mongo 
+help_text: set [url]
 include_in_help: true
