@@ -3,6 +3,8 @@ services:
   flottbot:
     build: ./flottbot/
     container_name: 'my-flottbot-container'
+    volumes:
+      - ./tokens:/tokens
     ports:
       - '3000:3000'
   database:
