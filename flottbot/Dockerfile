@@ -7,8 +7,12 @@ RUN apk update && apk add bash
 RUN apk --update add git less openssh && \
     rm -rf /var/lib/apt/lists/* && \
     rm /var/cache/apk/*
-RUN go get go.mongodb.org/mongo-driver; exit 0
+RUN go get go.mongodb.org/mongo-driver; exit 0;
+RUN go get golang.org/x/net/context
+RUN go get golang.org/x/oauth2
+RUN go get golang.org/x/oauth2/google
+RUN go get google.golang.org/api/sheets/v4
 
-COPY / .
+COPY config config
 
 CMD ["./flottbot"]
