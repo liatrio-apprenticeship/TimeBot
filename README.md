@@ -68,7 +68,9 @@ TimeBot is a Google Sheet integrated Slackbot used for timekeeping. TimeBot keep
 		- ${SLACK_EVENTS_CALLBACK_PATH}       -> /slack_events/v1/mybot-v1_events
 		- ${SLACK_INTERACTIONS_CALLBACK_PATH} -> /slack_events/v1/mybot-v1_events
 		- ${SLACK_TOKEN}                      -> Slack Token from OAuth & Permissions
+
 		> Slack_Token should start with 'xoxb-'
+
 		- ${SLACK_VERIFICATION_TOKEN}         -> Slack Verification Token from Basic Information
 
 	- Google Sheets API credentials
@@ -83,7 +85,7 @@ TimeBot is a Google Sheet integrated Slackbot used for timekeeping. TimeBot keep
 	- Initial Bot Setup Commands
 		- Once bot is running setup a slack direct message with bot
 		- Type 'sheet-print', you will receive a url to authenticate with. Do with with the email account associated with bot.
-		- Once you receive a token, type 'sheet-token <insert token here>' to authenticate the slack bot
+		- Once you receive a token, type 'sheet-token your_token_here' to authenticate the slack bot
 
 **Bot Setup Complete!!**
 	
