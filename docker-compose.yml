@@ -4,8 +4,8 @@ services:
     build: ./flottbot/
     container_name: 'my-flottbot-container'
     volumes:
-      - ./tokens:/tokens
-      - ./tokens/bot.yml:/go/config/bot.yml
+      - ./flottbot-volume:/tokens
+      - ./flottbot-volume/bot.yml:/go/config/bot.yml
     ports:
       - '3000:3000'
   database:
