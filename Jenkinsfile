@@ -5,8 +5,10 @@ pipeline {
     stages {
         stage('Build') {
             steps {
-                sh "docker build -t ${SKAFFOLD_DEFAULT_REPO}/TimeBot:lastest ./flottbot/"
-                sh "docker push ${SKAFFOLD_DEFAULT_REPO}/TimeBot:lastest"
+                container('skaffold') {
+                    sh "docker build -t ${SKAFFOLD_DEFAULT_REPO}/TimeBot:lastest ./flottbot/"
+                    sh "docker push ${SKAFFOLD_DEFAULT_REPO}/TimeBot:lastest"
+                }
                 
             }
         }
