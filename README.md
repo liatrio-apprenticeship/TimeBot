@@ -22,7 +22,7 @@ TimeBot is a Google Sheet integrated Slackbot used for timekeeping. TimeBot keep
 
 ## **Setup** 
 
-> Note: Start with offical documentation below
+> Note: Offical Framework documentation below
 
 **[Offical Documentation](https://target.github.io/flottbot-docs/basics/slack/)**
 
@@ -37,17 +37,18 @@ TimeBot is a Google Sheet integrated Slackbot used for timekeeping. TimeBot keep
 	- groups:history
 	- groups:write
 	- im:history
+	- im:read
 	- im:write
 	- mpim:history
 	- users:read
-   - users:read.email
+    - users:read.email
 
 #### Event Subscriptions
 
 - Request URL 
 	- ``` http://example.com/slack_events/v1/mybot-v1_events ``` 
        
-    > (Note: Replace 'http://example.com' with URL will come from Ngrok)
+    > (Note: Replace 'http://example.com' with URL, Ngrok is an option to create URL, Bot may need to be running to save URL)
 
 - Subscribe to bot events
 	- message.channels
@@ -55,30 +56,48 @@ TimeBot is a Google Sheet integrated Slackbot used for timekeeping. TimeBot keep
 	- message.im
 	- message.mpim
 
-### 2. Setup for Docker
+### 2. Initialize Flottbot Locally
 
-#### Set Environment Variables
+1. Clone Github Repository
 
-- SLACK_TOKEN from 'OAuth & Permissions'
-- SLACK_VERIFICATION_TOKEN from 'Basic Information'
-- SLACK_EVENTS_CALLBACK_PATH equal to '/slack_events/v1/mybot-v1_events'
-- SLACK_INTERACTIONS_CALLBACK_PATH equal to '/slack_events/v1/mybot-v1_events'
+	- ``` git clone https://github.com/liatrio-apprenticeship/TimeBot ```
 
-#### Run Docker Command in Directory Holding 'config' Folder
+2. Update and Add ./flottbot-volume/ files
 
-- ``` docker run --rm --name mybot --env SLACK_TOKEN=$SLACK_TOKEN --env SLACK_VERIFICATION_TOKEN=$SLACK_VERIFICATION_TOKEN --env SLACK_EVENTS_CALLBACK_PATH=$SLACK_EVENTS_CALLBACK_PATH --env SLACK_INTERACTIONS_CALLBACK_PATH=$SLACK_INTERACTIONS_CALLBACK_PATH -p 3000:3000 -v "$PWD"/config:/go/config target/flottbot:golang "./flottbot" ```
-> You can also download the correct flottbot release file for your OS [here](https://github.com/target/flottbot/releases) and run it in the directory above your /config/ folder to start TimeBot
+	- Update bot.yml with Slack Tokens
+		- ${SLACK_EVENTS_CALLBACK_PATH}       -> /slack_events/v1/mybot-v1_events
+		- ${SLACK_INTERACTIONS_CALLBACK_PATH} -> /slack_events/v1/mybot-v1_events
+		- ${SLACK_TOKEN}                      -> Slack Token from OAuth & Permissions
 
-### 3. Using Ngrok 
+		> Slack_Token should start with 'xoxb-'
 
-#### Run Ngrok Command
+		- ${SLACK_VERIFICATION_TOKEN}         -> Slack Verification Token from Basic Information
 
-- ``` Ngrok http 3000 ```
+	- Google Sheets API credentials
+		- Download the credentials.json file from https://developers.google.com/sheets/api/quickstart/go
+		- Place this file in the flottbot-volume directory
 
-#### Add Ngrok URL into Event Subscriptions
+3. Initial TimeBot Start
 
-- Request URL Example
-	- ``` http://8a0221b8.ngrok.io/slack_events/v1/mybot-v1_events ```
+	- Start TimeBot with Docker
+		- ``` docker-compose up ```
+	
+	- Initial Bot Setup Commands
+		- Once bot is running setup a slack direct message with bot
+		- Type 'sheet-print', you will receive a url to authenticate with. Do with with the email account associated with bot.
+		- Once you receive a token, type 'sheet-token your_token_here' to authenticate the slack bot
+
+**Bot Setup Complete!!**
+	
+---
+
+## **Notes** 
+
+- Ngrok Command
+	- ``` ngrok http 3000 ```
+
+- Example Slack Event Subscription URL
+	- http://8a0221b8.ngrok.io/slack_events/v1/mybot-v1_events
 
 ---
 
