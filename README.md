@@ -74,7 +74,7 @@ TimeBot is a Google Sheet integrated Slackbot used for timekeeping. TimeBot keep
 		- ${SLACK_VERIFICATION_TOKEN}         -> Slack Verification Token from Basic Information
 
 	- Google Sheets API credentials
-		- Download the Configuration.json file from https://developers.google.com/sheets/api/quickstart/go
+		- Download the credentials.json file from https://developers.google.com/sheets/api/quickstart/go
 		- Place this file in the flottbot-volume directory
 
 3. Initial TimeBot Start
