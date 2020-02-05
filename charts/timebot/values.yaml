@@ -83,6 +83,5 @@ variables:
   - name: MONGODB_URL
     value: mongodb://timebot-mongodb:27017
 
-mongodb:
-  extraEnvVars: 
-    - MONGO_INITDB_DATABASE=sup_dude # database name you want to make
+mongodb: {}
+  # mongodbDatabase: sup_dude # database name you want to make
