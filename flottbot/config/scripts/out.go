@@ -8,29 +8,40 @@ import (
         "net/http"
         "os"
         "time"
+        "math"
 
         "golang.org/x/net/context"
         "golang.org/x/oauth2"
         "golang.org/x/oauth2/google"
         "google.golang.org/api/sheets/v4"
 
-        //"go.mongodb.org/mongo-driver/bson"
+        "go.mongodb.org/mongo-driver/bson"
         "go.mongodb.org/mongo-driver/mongo"
         "go.mongodb.org/mongo-driver/mongo/options"
 )
 
+// TODO put these structs in seperate files since they are used
+// in multiple scripts
 type Time struct {
-    Uid string
     Timestamp time.Time
     In bool
+    Activity string
+    TimeSpent float64
 }
+
+type Users struct {
+    Uid string
+    Sid string
+}
+
+///////////Google Sheets Setup that is used in multiple files //////////
 
 // Retrieve a token, saves the token, then returns the generated client.
 func getClient(config *oauth2.Config) *http.Client {
         // The file token.json stores the user's access and refresh tokens, and is
         // created automatically when the authorization flow completes for the first
         // time.
-        tokFile := "token.json"
+        tokFile := "/tokens/token.json"
         tok, err := tokenFromFile(tokFile)
         if err != nil {
                 tok = getTokenFromWeb(config)
@@ -80,9 +91,11 @@ func saveToken(path string, token *oauth2.Token) {
         json.NewEncoder(f).Encode(token)
 }
 
+///////////End Google Sheets Setup that is used in multiple files //////////
+
 func main() {
-    /////////////////  Google Sheets Stuff  ///////////////////////
-    b, err := ioutil.ReadFile("credentials.json")
+    /////////////////  Google Sheets Setup  ///////////////////////
+    b, err := ioutil.ReadFile("/tokens/credentials.json")
     if err != nil {
         log.Fatalf("Unable to read client secret file: %v", err)
     }
@@ -98,13 +111,12 @@ func main() {
     if err != nil {
         log.Fatalf("Unable to retrieve Sheets client: %v", err)
     }
-    /////////////////  End Google Sheets Stuff  ///////////////////////
+    /////////////////  End Google Sheets Setup  //////////////////////
 
 
-
-    /////////////////  MongoDB Stuff  ///////////////////////
+    /////////////////  MongoDB Setup  ///////////////////////
     // Set client options
-    clientOptions := options.Client().ApplyURI("mongodb://localhost:27017")
+    clientOptions := options.Client().ApplyURI("mongodb://database:27017")
 
     // Connect to MongoDB
     mongoclient, err := mongo.Connect(context.TODO(), clientOptions)
@@ -119,30 +131,76 @@ func main() {
     if err != nil {
         log.Fatal(err)
     }
-    collection := mongoclient.Database("timesheets").Collection("daniel")
-    /////////////////  End MongoDB Stuff  ///////////////////////
+    collectionSheet := mongoclient.Database("timesheets").Collection(os.Args[1])
+    collectionUser := mongoclient.Database("main").Collection("users")
+    /////////////////  End MongoDB Setup  ///////////////////////
 
+    // Get the user's spreadsheet id from the database
+    var cur_user Users
+    filter := bson.D{{"uid", os.Args[1]}}
 
+    err = collectionUser.FindOne(context.TODO(), filter).Decode(&cur_user)
+    if err != nil {
+        fmt.Println("We can't find your Google sheet in the database, use the set command to add it.")
+        log.Fatal(err)
+    }
 
-    time_out := Time{"daniel", time.Now(), false}
-    insertResult, err := collection.InsertOne(context.TODO(), time_out)
+    // Setup find options to onlt get the most recent entry in database
+    findOptions := options.Find()
+    findOptions.SetSort(bson.D{{"timestamp", -1}})
+    findOptions.SetLimit(1)
+
+    // Passing bson.D{{}} as the filter matches all documents in the collection
+    cur, err := collectionSheet.Find(context.TODO(), bson.D{{}}, findOptions)
     if err != nil {
         log.Fatal(err)
     }
 
-    fmt.Println("Inserted a single document: ", insertResult.InsertedID)
+    // create a value into which the single document can be decoded
+    var elem Time
 
-    // Prints the names and majors of students in a sample spreadsheet:
-    // https://docs.google.com/spreadsheets/d/1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms/edit
-    spreadsheetId := "Your sheet id"
-    writeRange := "Sheet1!C2:F2"
+    // ensure that the previous command used was in
+    if cur.Next(context.TODO()) {
+        // convert the results of the find command to a Time struct
+        err = cur.Decode(&elem)
+        if err != nil {
+            log.Fatal(err)
+        }
+
+        if err := cur.Err(); err != nil {
+            log.Fatal(err)
+        }
+
+        if (!elem.In) {
+            log.Fatal("Please use 'in' before using 'out'.")
+        }
+    }
+    // Get the current time
+    cur_time := time.Now()
+    // subtract the in and out times and convert to hours
+    // then round the time to the nearest 2 decimals
+    time_tot := math.Round(cur_time.Sub(elem.Timestamp).Hours()*100)/100
+
+    time_out := Time{cur_time, false, os.Args[2], time_tot}
+    _, err = collectionSheet.InsertOne(context.TODO(), time_out)
+    if err != nil {
+        log.Fatal(err)
+    }
+
+    fmt.Println("You Worked", time_tot, "Hours")
+
+    spreadsheetId := cur_user.Sid
+    writeRange := "Sheet1!B1:F1"
 
     var vr sheets.ValueRange
 
-    myval := []interface{}{ "this is an activity", "time spent", nil, "Out Time: " + time.Now().Format("01/02/2006 03:04:05 PM")}
+    myval := []interface{}{ cur_time.Format("01/02/2006"), os.Args[2],
+         time_tot, elem.Timestamp.Format("01/02/2006 03:04:05 PM"),
+         cur_time.Format("01/02/2006 03:04:05 PM")}
     vr.Values = append(vr.Values, myval)
 
-    _, err = srv.Spreadsheets.Values.Update(spreadsheetId, writeRange, &vr).ValueInputOption("RAW").Do()
+    // Add new entry to end of Google Sheets document
+    _, err = srv.Spreadsheets.Values.Append(spreadsheetId, writeRange, &vr).ValueInputOption("RAW").Do()
     if err != nil {
         log.Fatalf("Unable to retrieve data from sheet. %v", err)
     }

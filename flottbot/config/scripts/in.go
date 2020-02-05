@@ -14,6 +14,8 @@ import (
     "go.mongodb.org/mongo-driver/mongo/options"
 )
 
+// TODO put these structs in seperate files since they are used
+// in multiple scripts
 type Time struct {
     Timestamp time.Time
     In bool
@@ -38,6 +40,7 @@ func main() {
     }
     collection := mongoclient.Database("timesheets").Collection(os.Args[1])
 
+    // Setup find options to onlt get the most recent entry in database
     findOptions := options.Find()
     findOptions.SetSort(bson.D{{"timestamp", -1}})
     findOptions.SetLimit(1)
@@ -48,10 +51,11 @@ func main() {
         log.Fatal(err)
     }
 
+    // ensure that the previous command used was out
     if cur.Next(context.TODO()) {
         // create a value into which the single document can be decoded
         var elem Time
-
+        // convert the results of the find command to a Time struct
         err = cur.Decode(&elem)
         if err != nil {
             log.Fatal(err)

@@ -3,14 +3,16 @@ name: Out
 active: true
 # trigger and args
 respond: out
+args:
+ - activity
 # actions
 actions:
  - name: "out"
    type: exec
-   cmd: go run config/scripts/out.go ${_user.email}
+   cmd: go run config/scripts/out.go ${_user.email} ${activity}
 # response
 direct_message_only: false
 format_output: "${_exec_output}"
 # help
-help_text: out
+help_text: out [activity]
 include_in_help: true
