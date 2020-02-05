@@ -1,16 +1,17 @@
 package main
 
 import (
-        "fmt"
-        "log"
-        "time"
+    "fmt"
+    "log"
+    "time"
+    "os"
 
 	"golang.org/x/net/context"
 
-        //"go.mongodb.org/mongo-driver/bson"
-        
+    "go.mongodb.org/mongo-driver/bson"
+
 	"go.mongodb.org/mongo-driver/mongo"
-        "go.mongodb.org/mongo-driver/mongo/options"
+    "go.mongodb.org/mongo-driver/mongo/options"
 )
 
 type Time struct {
@@ -19,7 +20,6 @@ type Time struct {
 }
 
 func main() {
-    /////////////////  MongoDB Stuff  ///////////////////////
     // Set client options
     clientOptions := options.Client().ApplyURI("mongodb://database:27017")
 
@@ -36,9 +36,35 @@ func main() {
     if err != nil {
         log.Fatal(err)
     }
-    collection := mongoclient.Database("timesheets").Collection("daniel")
-    /////////////////  End MongoDB Stuff  ///////////////////////
+    collection := mongoclient.Database("timesheets").Collection(os.Args[1])
 
+    findOptions := options.Find()
+    findOptions.SetSort(bson.D{{"timestamp", -1}})
+    findOptions.SetLimit(1)
+
+    // Passing bson.D{{}} as the filter matches all documents in the collection
+    cur, err := collection.Find(context.TODO(), bson.D{{}}, findOptions)
+    if err != nil {
+        log.Fatal(err)
+    }
+
+    if cur.Next(context.TODO()) {
+        // create a value into which the single document can be decoded
+        var elem Time
+
+        err = cur.Decode(&elem)
+        if err != nil {
+            log.Fatal(err)
+        }
+
+        if err := cur.Err(); err != nil {
+            log.Fatal(err)
+        }
+
+        if (elem.In) {
+            log.Fatal("Please use 'out' before using 'in'.")
+        }
+    }
 
     time_in := Time{time.Now(), true}
     insertResult, err := collection.InsertOne(context.TODO(), time_in)
