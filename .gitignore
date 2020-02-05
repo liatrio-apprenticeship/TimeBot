@@ -2,3 +2,5 @@
 run.sh
 credentials.json
 token.json
+charts/timebot/charts/
+mongo-volume/
