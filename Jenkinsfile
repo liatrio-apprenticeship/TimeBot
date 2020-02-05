@@ -15,7 +15,7 @@ pipeline {
         stage('Deployment') {
             steps {
                 container('skaffold') {
-                    sh "helm dependency update"
+                    sh "helm dependency update ./charts/timebot/"
                     sh "helm install --name timebot --set image.repository=${SKAFFOLD_DEFAULT_REPO}/timebot:lastest --namespace ${productionNamespace} ./charts/timebot/"
                 }
             }
