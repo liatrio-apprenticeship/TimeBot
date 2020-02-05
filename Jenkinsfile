@@ -17,7 +17,7 @@ pipeline {
                 container('skaffold') {
                     sh "helm init --client-only"
                     sh "helm dependency update ./charts/timebot/"
-                    sh "helm install --name timebot --set image.repository=${SKAFFOLD_DEFAULT_REPO}/timebot:lastest --tiller-namespace ${productionNamespace} --namespace ${productionNamespace} ./charts/timebot/"
+                    sh "helm upgrade --install --name timebot --set image.repository=${SKAFFOLD_DEFAULT_REPO}/timebot:lastest --tiller-namespace ${productionNamespace} --namespace ${productionNamespace} ./charts/timebot/"
                 }
             }
         }
