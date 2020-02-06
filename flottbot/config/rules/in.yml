@@ -1,0 +1,16 @@
+# meta
+name: In
+active: true
+# trigger and args
+respond: in
+# actions
+actions:
+ - name: "in"
+   type: exec
+   cmd: go run config/scripts/in.go ${_user.email}
+# response
+direct_message_only: false
+format_output: "${_exec_output}"
+# help
+help_text: in
+include_in_help: true

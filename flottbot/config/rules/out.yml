@@ -1,0 +1,16 @@
+# meta
+name: Out
+active: true
+# trigger and args
+respond: out
+# actions
+actions:
+ - name: "out"
+   type: exec
+   cmd: go run config/scripts/out.go ${_user.email}
+# response
+direct_message_only: false
+format_output: "${_exec_output}"
+# help
+help_text: out
+include_in_help: true
