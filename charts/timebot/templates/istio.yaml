@@ -24,7 +24,7 @@ spec:
       mode: SIMPLE
       serverCertificate: "sds"
       privateKey: "sds"
-      credentialName: "{{ .Release.Namespace }}-certificate"
+      credentialName: "prod-app-wildcard-certificate"
 ---
 apiVersion: networking.istio.io/v1alpha3
 kind: VirtualService
