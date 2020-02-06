@@ -22,7 +22,9 @@ pipeline {
             }
             post {
                 failure {
-                    sh "helm --tiller-namespace ${productionNamespace} delete --purge timebot"
+                    container('skaffold'){
+                        sh "helm --tiller-namespace ${productionNamespace} delete --purge timebot"
+                    }
                 }
             }
         }
