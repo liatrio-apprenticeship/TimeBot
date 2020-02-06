@@ -85,3 +85,5 @@ variables:
 
 mongodb: {}
   # mongodbDatabase: sup_dude # database name you want to make
+
+istioDomain: 
