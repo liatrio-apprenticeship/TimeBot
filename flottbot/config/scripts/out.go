@@ -178,7 +178,7 @@ func main() {
     cur_time := time.Now()
     // subtract the in and out times and convert to hours
     // then round the time to the nearest 2 decimals
-    time_tot := math.Round(cur_time.Sub(elem.Timestamp).Hours()*100)/100
+    time_tot := math.Round(cur_time.Sub(elem.Timestamp).Hours()/0.25)*0.25
 
     time_out := Time{cur_time, false, time_tot}
     _, err = collectionSheet.InsertOne(context.TODO(), time_out)

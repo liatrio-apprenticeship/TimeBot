@@ -71,12 +71,11 @@ func main() {
     }
 
     time_in := Time{time.Now(), true}
-    insertResult, err := collection.InsertOne(context.TODO(), time_in)
+    _, err := collection.InsertOne(context.TODO(), time_in)
     if err != nil {
         log.Fatal(err)
     }
 
-    fmt.Println("Inserted a single document: ", insertResult.InsertedID)
     fmt.Println("Clocked In")
 
 }
