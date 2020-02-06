@@ -20,6 +20,11 @@ pipeline {
                     sh "helm upgrade timebot -i --set image.repository=${SKAFFOLD_DEFAULT_REPO}/timebot:lastest --tiller-namespace ${productionNamespace} --namespace ${productionNamespace} ./charts/timebot/"
                 }
             }
+            post {
+                failure {
+                    sh "helm --tiller-namespace ${productionNamespace} delete --purge timebot"
+                }
+            }
         }
     }
     
