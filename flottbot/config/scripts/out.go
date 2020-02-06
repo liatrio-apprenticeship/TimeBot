@@ -25,7 +25,6 @@ import (
 type Time struct {
     Timestamp time.Time
     In bool
-    Activity string
     TimeSpent float64
 }
 
@@ -181,7 +180,7 @@ func main() {
     // then round the time to the nearest 2 decimals
     time_tot := math.Round(cur_time.Sub(elem.Timestamp).Hours()*100)/100
 
-    time_out := Time{cur_time, false, os.Args[2], time_tot}
+    time_out := Time{cur_time, false, time_tot}
     _, err = collectionSheet.InsertOne(context.TODO(), time_out)
     if err != nil {
         log.Fatal(err)
@@ -194,7 +193,7 @@ func main() {
 
     var vr sheets.ValueRange
 
-    myval := []interface{}{ cur_time.Format("01/02/2006"), os.Args[2],
+    myval := []interface{}{ cur_time.Format("01/02/2006"), nil,
          time_tot, elem.Timestamp.Format("01/02/2006 03:04:05 PM"),
          cur_time.Format("01/02/2006 03:04:05 PM")}
     vr.Values = append(vr.Values, myval)
