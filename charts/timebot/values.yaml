@@ -73,11 +73,15 @@ config:
   name: TimeBot
   chat_application: slack
   slack_token:
-  slack_verficiation_token:
+  slack_verifciation_token:
   cli: false
   scheduler: false
   debug: true
   log_json: false
+
+credentials:
+
+token:
 
 variables:
   - name: MONGODB_URL

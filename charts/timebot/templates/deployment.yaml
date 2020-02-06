@@ -46,6 +46,14 @@ spec:
             mountPath: "/go/config/bot.yml"
             readOnly: true
             subPath: bot.yml
+          - name: credentials
+            mountPath: "/go/config/credentials.json"
+            readOnly: true
+            subPath: credentials.json
+          - name: token
+            mountPath: "/go/config/token.json"
+            readOnly: true
+            subPath: token.json
           env:
             {{- toYaml .Values.variables | nindent 12 }}
       {{- with .Values.nodeSelector }}
