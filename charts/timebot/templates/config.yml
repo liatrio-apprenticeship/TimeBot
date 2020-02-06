@@ -5,4 +5,4 @@ metadata:
 type: Opaque
 data:
     bot.yml: 
-        {{ toYaml .Values.temp | b64enc}}
+        {{ toYaml .Values.config | b64enc}}

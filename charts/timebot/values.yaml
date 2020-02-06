@@ -67,7 +67,7 @@ tolerations: []
 
 affinity: {}
 
-temp: 
+config: 
   slack_events_callback_path: /slack_events/v1/mybot-v1_events
   slack_interactions_callback_path: /slack_events/v1/mybot-v1_events
   name: TimeBot
