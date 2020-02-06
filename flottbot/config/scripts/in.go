@@ -71,7 +71,7 @@ func main() {
     }
 
     time_in := Time{time.Now(), true}
-    _, err := collection.InsertOne(context.TODO(), time_in)
+    _, err = collection.InsertOne(context.TODO(), time_in)
     if err != nil {
         log.Fatal(err)
     }
