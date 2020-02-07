@@ -26,6 +26,7 @@ type Time struct {
     Timestamp time.Time
     In bool
     TimeSpent float64
+    Day bool
 }
 
 type Users struct {
@@ -133,7 +134,26 @@ func main() {
     collectionSheet := mongoclient.Database("timesheets").Collection(os.Args[1])
     collectionUser := mongoclient.Database("main").Collection("users")
     /////////////////  End MongoDB Setup  ///////////////////////
+/*
+    ////////////////   Collection Check   ///////////////////////
+    db := mongoclient.Database("timesheets") // Get db, use db name if not given in connection url
 
+    names, err := db.CollectionNames()
+    if err != nil {
+        // Handle error
+        log.Printf("Failed to get coll names: %v", err)
+        return
+    }
+
+    // Simply search in the names slice, e.g.
+    for _, name := range names {
+        if name == "collectionToCheck" {
+            log.Printf("The collection exists!")
+            break
+        }
+    }
+    ////////////////   End Collection Check   ///////////////////////
+*/
     // Get the user's spreadsheet id from the database
     var cur_user Users
     filter := bson.D{{"uid", os.Args[1]}}
@@ -144,7 +164,7 @@ func main() {
         log.Fatal(err)
     }
 
-    // Setup find options to onlt get the most recent entry in database
+    // Setup find options to only get the most recent entry in database
     findOptions := options.Find()
     findOptions.SetSort(bson.D{{"timestamp", -1}})
     findOptions.SetLimit(1)
@@ -173,14 +193,26 @@ func main() {
         if (!elem.In) {
             log.Fatal("Please use 'in' before using 'out'.")
         }
+        /*
+        count, _ := collectionSheet.CountDocuments(context.Background(), bson.D{})
+        emp, _ := mongoclient.Database("empty").Collection("empty").CountDocuments(context.Background(), bson.D{})
+        if (count == emp) {
+            log.Fatal("Please use 'in' before using 'out'.")
+        }
+        */
     }
     // Get the current time
     cur_time := time.Now()
     // subtract the in and out times and convert to hours
     // then round the time to the nearest 2 decimals
     time_tot := math.Round(cur_time.Sub(elem.Timestamp).Hours()/0.25)*0.25
+    
+    if (time_tot > 24){
+        fmt.Println("You forgot to check out.\nHours set to 0, please update manually.")
+        time_tot = 0
+    }
 
-    time_out := Time{cur_time, false, time_tot}
+    time_out := Time{cur_time, false, time_tot, true}
     _, err = collectionSheet.InsertOne(context.TODO(), time_out)
     if err != nil {
         log.Fatal(err)
@@ -189,7 +221,7 @@ func main() {
     fmt.Println("You Worked", time_tot, "Hours")
 
     spreadsheetId := cur_user.Sid
-    writeRange := "Sheet1!B1:F1"
+    writeRange := "Sheet1!A2:F"
 
     var vr sheets.ValueRange
 
