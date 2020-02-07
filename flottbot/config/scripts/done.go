@@ -26,6 +26,7 @@ type Time struct {
     Timestamp time.Time
     In bool
     TimeSpent float64
+    Day bool
 }
 
 type Users struct {
@@ -106,8 +107,7 @@ func main() {
     }
     client := getClient(config)
 
-    // uncomment this line when adding google sheets
-    //srv, err := sheets.New(client)
+    srv, err := sheets.New(client)
     _, err = sheets.New(client) // comment when using google sheets
     if err != nil {
         log.Fatalf("Unable to retrieve Sheets client: %v", err)
@@ -151,9 +151,9 @@ func main() {
     //findOptions.SetSort(bson.D{{"timestamp", -1}})
     //findOptions.SetLimit(1)
 
-    //filter := bson.D{{"current", true}}
+    filter2 := bson.D{{"day", true}}
     // Passing bson.D{{}} as the filter matches all documents in the collection
-    cur, err := collectionSheet.Find(context.TODO(), bson.D{{}}/*, findOptions*/)
+    cur, err := collectionSheet.Find(context.TODO(), filter2/*, findOptions*/)
     if err != nil {
         log.Fatal(err)
     }
@@ -194,15 +194,13 @@ func main() {
     }
 
     fmt.Println("Your Total: ", sum)
-/*
+
     spreadsheetId := cur_user.Sid
-    writeRange := "Sheet1!B1:F1"
+    writeRange := "Sheet1!A2:F2"
 
     var vr sheets.ValueRange
 
-    myval := []interface{}{ cur_time.Format("01/02/2006"), nil,
-         time_tot, elem.Timestamp.Format("01/02/2006 03:04:05 PM"),
-         cur_time.Format("01/02/2006 03:04:05 PM")}
+    myval := []interface{}{ nil, nil, nil, nil, nil, sum}
     vr.Values = append(vr.Values, myval)
 
     // Add new entry to end of Google Sheets document
@@ -210,5 +208,5 @@ func main() {
     if err != nil {
         log.Fatalf("Unable to retrieve data from sheet. %v", err)
     }
-*/
+
 }
