@@ -42,30 +42,8 @@ func getClient(config *oauth2.Config) *http.Client {
         // created automatically when the authorization flow completes for the first
         // time.
         tokFile := "/tokens/token.json"
-        tok, err := tokenFromFile(tokFile)
-        if err != nil {
-                tok = getTokenFromWeb(config)
-                saveToken(tokFile, tok)
-        }
+        tok, _ := tokenFromFile(tokFile)
         return config.Client(context.Background(), tok)
-}
-
-// Request a token from the web, then returns the retrieved token.
-func getTokenFromWeb(config *oauth2.Config) *oauth2.Token {
-        authURL := config.AuthCodeURL("state-token", oauth2.AccessTypeOffline)
-        fmt.Printf("Go to the following link in your browser then type the "+
-                "authorization code: \n%v\n", authURL)
-
-        var authCode string
-        if _, err := fmt.Scan(&authCode); err != nil {
-                log.Fatalf("Unable to read authorization code: %v", err)
-        }
-
-        tok, err := config.Exchange(context.TODO(), authCode)
-        if err != nil {
-                log.Fatalf("Unable to retrieve token from web: %v", err)
-        }
-        return tok
 }
 
 // Retrieves a token from a local file.
@@ -78,17 +56,6 @@ func tokenFromFile(file string) (*oauth2.Token, error) {
         tok := &oauth2.Token{}
         err = json.NewDecoder(f).Decode(tok)
         return tok, err
-}
-
-// Saves a token to a file path.
-func saveToken(path string, token *oauth2.Token) {
-        fmt.Printf("Saving credential file to: %s\n", path)
-        f, err := os.OpenFile(path, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0600)
-        if err != nil {
-                log.Fatalf("Unable to cache oauth token: %v", err)
-        }
-        defer f.Close()
-        json.NewEncoder(f).Encode(token)
 }
 
 ///////////End Google Sheets Setup that is used in multiple files //////////
@@ -173,26 +140,6 @@ func main() {
         log.Fatal(err)
     }
 
-    /*
-    // create a value into which the single document can be decoded
-    var elem Time
-
-    // ensure that the previous command used was in
-    if cur.Next(context.TODO()) {
-        // convert the results of the find command to a Time struct
-        err = cur.Decode(&elem)
-        if err != nil {
-            log.Fatal(err)
-        }
-
-        if err := cur.Err(); err != nil {
-            log.Fatal(err)
-        }
-
-        if (!elem.In) {
-            log.Fatal("Please use 'in' before using 'out'.")
-        }
-    }*/
     sum := 0.0
 
     for cur.Next(context.TODO()) {
