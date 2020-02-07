@@ -54,6 +54,8 @@ spec:
             mountPath: "/go/config/token.json"
             readOnly: true
             subPath: token.json
+          - name: mongo
+            mountPath: "/go/mongodb/"
           env:
             {{- toYaml .Values.variables | nindent 12 }}
       {{- with .Values.nodeSelector }}
@@ -75,3 +77,6 @@ spec:
       - name: googleapi
         secret:
           secretName: credential-google-api
+      - name: mongo
+        secret:
+          secretName: mongodb
