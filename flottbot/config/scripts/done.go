@@ -158,6 +158,21 @@ func main() {
         log.Fatal(err)
     }
 
+    update := bson.M{
+        "$set": bson.M{
+        "day" : false,
+        },
+    }
+    
+    _, err = collectionSheet.UpdateMany(
+        context.TODO(),
+        filter2,
+        update,
+    )
+    if err != nil {
+        log.Fatal(err)
+    }
+
     /*
     // create a value into which the single document can be decoded
     var elem Time
