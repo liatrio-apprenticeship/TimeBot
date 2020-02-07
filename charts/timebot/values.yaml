@@ -79,10 +79,6 @@ config:
   debug: true
   log_json: false
 
-credentials:
-
-token:
-
 variables:
   - name: MONGODB_URL
     value: mongodb://timebot-mongodb:27017

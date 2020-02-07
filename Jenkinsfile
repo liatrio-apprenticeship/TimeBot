@@ -17,8 +17,8 @@ pipeline {
                 container('skaffold') {
                     sh "helm init --client-only"
                     sh "helm dependency update ./charts/timebot/"
-                    withCredentials([string(credentialsId: 'jenkins-credential-slack', variable: 'SLACK_TOKEN'), string(credentialsId: 'jenkins-credential-slack-verification', variable: 'SLACK_VERIFICATION_TOKEN'), string(credentialsId: 'jenkins-credential-google-api', variable: 'CREDENTIALS'), string(credentialsId: 'jenkins-credential-google-api-token', variable: 'API_TOKEN')]){
-                        sh "helm upgrade timebot -i --set istioDomain=${env.productionDomain} --set config.slack_token=${SLACK_TOKEN} --set config.slack_verification_token=${SLACK_VERIFICATION_TOKEN} --set credentials=${CREDENTIALS} --set token=${API_TOKEN} --set image.repository=${SKAFFOLD_DEFAULT_REPO}/timebot:lastest --tiller-namespace ${productionNamespace} --namespace ${productionNamespace} ./charts/timebot/"
+                    withCredentials([string(credentialsId: 'jenkins-credential-slack', variable: 'SLACK_TOKEN'), string(credentialsId: 'jenkins-credential-slack-verification', variable: 'SLACK_VERIFICATION_TOKEN')]){
+                        sh "helm upgrade timebot -i --set istioDomain=${env.productionDomain} --set config.slack_token=${SLACK_TOKEN} --set config.slack_verification_token=${SLACK_VERIFICATION_TOKEN} --set image.repository=${SKAFFOLD_DEFAULT_REPO}/timebot:lastest --tiller-namespace ${productionNamespace} --namespace ${productionNamespace} ./charts/timebot/"
                     }
                 }
             }

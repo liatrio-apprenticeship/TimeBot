@@ -46,11 +46,11 @@ spec:
             mountPath: "/go/config/bot.yml"
             readOnly: true
             subPath: bot.yml
-          - name: credentials
+          - name: googleapi
             mountPath: "/go/config/credentials.json"
             readOnly: true
             subPath: credentials.json
-          - name: token
+          - name: googleapi
             mountPath: "/go/config/token.json"
             readOnly: true
             subPath: token.json
@@ -72,3 +72,6 @@ spec:
       - name: config
         secret:
           secretName: timebotconfig
+      - name: googleapi
+        secret:
+          secretName: credential-google-api

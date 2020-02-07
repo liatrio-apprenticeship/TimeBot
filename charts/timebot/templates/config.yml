@@ -6,7 +6,3 @@ type: Opaque
 data:
     bot.yml: 
       {{ toYaml .Values.config | b64enc }}
-    credentials.yml: 
-      {{ .Values.credentials | b64enc }}
-    token.yml:
-      {{ .Values.token | b64enc }}
