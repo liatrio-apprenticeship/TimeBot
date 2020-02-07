@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: timebotconfig
+type: Opaque
+data:
+    bot.yml: 
+      {{ toYaml .Values.config | b64enc }}
