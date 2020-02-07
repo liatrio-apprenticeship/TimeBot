@@ -8,7 +8,7 @@ import (
         "net/http"
         "os"
         "time"
-        "math"
+        //"math"
 
         "golang.org/x/net/context"
         "golang.org/x/oauth2"
@@ -108,6 +108,7 @@ func main() {
     client := getClient(config)
 
     srv, err := sheets.New(client)
+    _, err = sheets.New(client) // comment when using google sheets
     if err != nil {
         log.Fatalf("Unable to retrieve Sheets client: %v", err)
     }
@@ -134,26 +135,7 @@ func main() {
     collectionSheet := mongoclient.Database("timesheets").Collection(os.Args[1])
     collectionUser := mongoclient.Database("main").Collection("users")
     /////////////////  End MongoDB Setup  ///////////////////////
-/*
-    ////////////////   Collection Check   ///////////////////////
-    db := mongoclient.Database("timesheets") // Get db, use db name if not given in connection url
 
-    names, err := db.CollectionNames()
-    if err != nil {
-        // Handle error
-        log.Printf("Failed to get coll names: %v", err)
-        return
-    }
-
-    // Simply search in the names slice, e.g.
-    for _, name := range names {
-        if name == "collectionToCheck" {
-            log.Printf("The collection exists!")
-            break
-        }
-    }
-    ////////////////   End Collection Check   ///////////////////////
-*/
     // Get the user's spreadsheet id from the database
     var cur_user Users
     filter := bson.D{{"uid", os.Args[1]}}
@@ -164,17 +146,34 @@ func main() {
         log.Fatal(err)
     }
 
-    // Setup find options to only get the most recent entry in database
-    findOptions := options.Find()
-    findOptions.SetSort(bson.D{{"timestamp", -1}})
-    findOptions.SetLimit(1)
+    // Setup find options to onlt get the most recent entry in database
+    //findOptions := options.Find()
+    //findOptions.SetSort(bson.D{{"timestamp", -1}})
+    //findOptions.SetLimit(1)
 
+    filter2 := bson.D{{"day", true}}
     // Passing bson.D{{}} as the filter matches all documents in the collection
-    cur, err := collectionSheet.Find(context.TODO(), bson.D{{}}, findOptions)
+    cur, err := collectionSheet.Find(context.TODO(), filter2/*, findOptions*/)
     if err != nil {
         log.Fatal(err)
     }
 
+    update := bson.M{
+        "$set": bson.M{
+        "day" : false,
+        },
+    }
+    
+    _, err = collectionSheet.UpdateMany(
+        context.TODO(),
+        filter2,
+        update,
+    )
+    if err != nil {
+        log.Fatal(err)
+    }
+
+    /*
     // create a value into which the single document can be decoded
     var elem Time
 
@@ -193,41 +192,30 @@ func main() {
         if (!elem.In) {
             log.Fatal("Please use 'in' before using 'out'.")
         }
-        /*
-        count, _ := collectionSheet.CountDocuments(context.Background(), bson.D{})
-        emp, _ := mongoclient.Database("empty").Collection("empty").CountDocuments(context.Background(), bson.D{})
-        if (count == emp) {
-            log.Fatal("Please use 'in' before using 'out'.")
+    }*/
+    sum := 0.0
+
+    for cur.Next(context.TODO()) {
+
+        // create a value into which the single document can be decoded
+        var elem Time
+        err := cur.Decode(&elem)
+        if err != nil {
+            log.Fatal(err)
         }
-        */
-    }
-    // Get the current time
-    cur_time := time.Now()
-    // subtract the in and out times and convert to hours
-    // then round the time to the nearest 2 decimals
-    time_tot := math.Round(cur_time.Sub(elem.Timestamp).Hours()/0.25)*0.25
-    
-    if (time_tot > 24){
-        fmt.Println("You forgot to check out.\nHours set to 0, please update manually.")
-        time_tot = 0
+
+        //result = append(results, &elem)
+        sum += elem.TimeSpent
     }
 
-    time_out := Time{cur_time, false, time_tot, true}
-    _, err = collectionSheet.InsertOne(context.TODO(), time_out)
-    if err != nil {
-        log.Fatal(err)
-    }
-
-    fmt.Println("You Worked", time_tot, "Hours")
+    fmt.Println("Your Total: ", sum)
 
     spreadsheetId := cur_user.Sid
-    writeRange := "Sheet1!A2:F"
+    writeRange := "Sheet1!A2:F2"
 
     var vr sheets.ValueRange
 
-    myval := []interface{}{ cur_time.Format("01/02/2006"), nil,
-         time_tot, elem.Timestamp.Format("01/02/2006 03:04:05 PM"),
-         cur_time.Format("01/02/2006 03:04:05 PM")}
+    myval := []interface{}{ nil, nil, nil, nil, nil, sum}
     vr.Values = append(vr.Values, myval)
 
     // Add new entry to end of Google Sheets document

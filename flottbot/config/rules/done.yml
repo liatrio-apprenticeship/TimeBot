@@ -1,0 +1,16 @@
+# meta
+name: Done
+active: true
+# trigger and args
+respond: done
+# actions
+actions:
+ - name: "done"
+   type: exec
+   cmd: go run config/scripts/done.go ${_user.email}
+# response
+direct_message_only: false
+format_output: "${_exec_output}"
+# help
+help_text: done
+include_in_help: true
