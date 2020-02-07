@@ -36,7 +36,7 @@ func getClient(config *oauth2.Config) *http.Client {
 	// The file token.json stores the user's access and refresh tokens, and is
 	// created automatically when the authorization flow completes for the first
 	// time.
-	tokFile := "/go/config/token.json"
+	tokFile := "/tokens/token.json"
 	tok, err := tokenFromFile(tokFile)
 	if err != nil {
 		getTokenFromWeb(config)
@@ -64,7 +64,7 @@ func tokenFromFile(file string) (*oauth2.Token, error) {
 }
 
 func main() {
-	b, err := ioutil.ReadFile("/go/config/credentials.json")
+	b, err := ioutil.ReadFile("/tokens/credentials.json")
 	if err != nil {
 		log.Fatalf("Unable to read client secret file: %v", err)
 	}
