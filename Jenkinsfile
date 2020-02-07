@@ -13,6 +13,9 @@ pipeline {
             }
         }
         stage('Deployment') {
+            when {
+                branch 'master'
+            }
             steps {
                 container('skaffold') {
                     sh "helm init --client-only"
