@@ -6,12 +6,12 @@ respond: set
 args:
 # actions
 actions:
- - name: "mongo_test"
+ - name: "mongo-test"
    type: exec
    cmd: go run config/scripts/mongo_test.go 
 # response
 direct_message_only: false
 format_output: "${_exec_output}"
 # help
-help_text: mongo_test
+help_text: mongo-test
 include_in_help: true
