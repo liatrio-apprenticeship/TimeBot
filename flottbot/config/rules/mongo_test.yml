@@ -1,0 +1,17 @@
+# meta
+name: mongo_test
+active: true
+# trigger and args
+respond: set
+args:
+# actions
+actions:
+ - name: "mongo_test"
+   type: exec
+   cmd: go run config/scripts/mongo_test.go 
+# response
+direct_message_only: false
+format_output: "${_exec_output}"
+# help
+help_text: mongo_test
+include_in_help: true
