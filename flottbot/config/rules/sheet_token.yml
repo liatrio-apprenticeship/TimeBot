@@ -15,4 +15,4 @@ direct_message_only: false
 format_output: "${_exec_output}"
 # help
 help_text: sheet-token 
-include_in_help: true
+include_in_help: false
